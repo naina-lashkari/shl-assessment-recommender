@@ -2,7 +2,7 @@ async function getRecommendations() {
 
     const query = document.getElementById("query").value;
 
-    const response = await fetch("http://127.0.0.1:8000/chat", {
+    const response = await fetch("https://shl-assessment-recommender-tnkb.onrender.com/chat", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
