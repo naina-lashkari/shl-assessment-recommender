@@ -1,33 +1,19 @@
-import json
-import faiss
-import numpy as np
-from sentence_transformers import SentenceTransformer
+def semantic_search(query, assessments, top_k=5):
+    query = query.lower()
 
-# Load assessments
-with open("data/assessments.json", "r") as file:
-    assessments = json.load(file)
+    scored = []
 
-# Load FAISS index
-index = faiss.read_index("data/faiss_index.index")
+    for assessment in assessments:
+        text = (
+            assessment.get("name", "") + " " +
+            assessment.get("description", "") + " " +
+            assessment.get("test_type", "")
+        ).lower()
 
-# Load embedding model
-model = SentenceTransformer("all-MiniLM-L6-v2")
+        score = sum(word in text for word in query.split())
 
+        scored.append((score, assessment))
 
-def search_assessments(query, top_k=3):
+    scored.sort(reverse=True, key=lambda x: x[0])
 
-    # Convert query into embedding
-    query_embedding = model.encode([query])
-
-    query_embedding = np.array(query_embedding).astype("float32")
-
-    # Search FAISS index
-    distances, indices = index.search(query_embedding, top_k)
-
-    results = []
-
-    for idx in indices[0]:
-
-        results.append(assessments[idx])
-
-    return results
+    return [item[1] for item in scored[:top_k]]
