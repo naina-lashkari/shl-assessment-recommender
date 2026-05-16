@@ -21,6 +21,9 @@ from app.utils.loader import load_assessments
 
 app = FastAPI()
 
+# Load assessments once at startup
+assessments = load_assessments()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -42,8 +45,6 @@ def health_check():
 
 @app.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest):
-
-    assessments = load_assessments()
 
     conversation_text = " ".join(
         [message.content for message in request.messages]
@@ -75,8 +76,10 @@ def chat(request: ChatRequest):
             end_of_conversation=True
         )
 
-    from app.utils.loader import assessments
-    matched_assessments = search_assessments(conversation_text, assessments)
+    matched_assessments = search_assessments(
+        conversation_text,
+        assessments
+    )
 
     if not matched_assessments:
 
