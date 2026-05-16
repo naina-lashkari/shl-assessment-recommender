@@ -75,7 +75,8 @@ def chat(request: ChatRequest):
             end_of_conversation=True
         )
 
-    matched_assessments = search_assessments(conversation_text)
+    from app.utils.loader import assessments
+    matched_assessments = search_assessments(conversation_text, assessments)
 
     if not matched_assessments:
 
