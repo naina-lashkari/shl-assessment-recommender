@@ -1,4 +1,4 @@
-def semantic_search(query, assessments, top_k=5):
+def search_assessments(query, assessments, top_k=5):
     query = query.lower()
 
     scored = []
